@@ -2,7 +2,6 @@ package com.example.foodgo.ui.screens.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -32,16 +31,33 @@ fun OnboardingScreen(onTimeout: () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
+        ) {
+            // Logo Placeholder
+            Box(
+                modifier = Modifier
+                    .size(150.dp)
+                    .background(Color(0xFFE8F5E9), RoundedCornerShape(32.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("\uD83C\uDF72", fontSize = 80.sp)
+            }
 
+            Spacer(modifier = Modifier.height(24.dp))
 
+            Text(
+                text = "FoodGo",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color(0xFF356859)
+            )
 
+            Spacer(modifier = Modifier.height(48.dp))
 
-
-
-
-
-            
-
+            CircularProgressIndicator(
+                modifier = Modifier.size(40.dp),
+                color = Color(0xFF356859),
+                strokeWidth = 4.dp
+            )
         }
     }
 }
