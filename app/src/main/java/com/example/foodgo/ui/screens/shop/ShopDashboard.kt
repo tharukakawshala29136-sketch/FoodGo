@@ -1,5 +1,6 @@
 package com.example.foodgo.ui.screens.shop
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -368,3 +369,126 @@ fun RecentOrderItem(order: Order) {
 }
 
 data class StaffMember(val name: String, val role: StaffRole)
+
+@Composable
+fun StaffActionDialog(
+    title: String,
+    initialName: String = "",
+    initialEmail: String = "",
+    initialRole: StaffRole = StaffRole.Staff,
+    isEdit: Boolean = false,
+    onDismiss: () -> Unit,
+    onSave: (String, String, String, StaffRole, Boolean) -> Unit
+) {
+    var name by remember { mutableStateOf(initialName) }
+    var email by remember { mutableStateOf(initialEmail) }
+    var password by remember { mutableStateOf("") }
+    var role by remember { mutableStateOf(initialRole) }
+    var isEnabled by remember { mutableStateOf(true) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title, fontWeight = FontWeight.Bold) },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(if (isEdit) "New Password (Optional)" else "Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("User Type:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    StaffTypeButton(
+                        label = "Staff",
+                        selected = role == StaffRole.Staff,
+                        onClick = { role = StaffRole.Staff },
+                        modifier = Modifier.weight(1f)
+                    )
+                    StaffTypeButton(
+                        label = "Delivery Rider",
+                        selected = role == StaffRole.DeliveryRider,
+                        onClick = { role = StaffRole.DeliveryRider },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                if (isEdit) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = if (isEnabled) "Status: Active" else "Status: Inactive")
+                        Switch(
+                            checked = isEnabled,
+                            onCheckedChange = { isEnabled = it },
+                            colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF356859))
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSave(name, email, password, role, isEnabled) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF356859))
+            ) {
+                Text(if (isEdit) "Update" else "Add")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color.Gray)
+            }
+        }
+    )
+}
+@Composable
+fun StaffTypeButton(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = if (selected) Color(0xFF356859).copy(alpha = 0.1f) else Color.Transparent,
+            contentColor = if (selected) Color(0xFF356859) else Color.Gray
+        ),
+        border = BorderStroke(
+            1.dp,
+            if (selected) Color(0xFF356859) else Color.LightGray
+        )
+    ) {
+        Text(label, fontSize = 12.sp)
+    }
+}
