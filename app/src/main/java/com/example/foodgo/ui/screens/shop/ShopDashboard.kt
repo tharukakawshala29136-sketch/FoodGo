@@ -2,7 +2,10 @@ package com.example.foodgo.ui.screens.shop
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -600,6 +604,337 @@ fun ManageStaffContent() {
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = "Edit Staff",
+                            tint = Color(0xFF356859)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FoodActionDialog(
+    title: String,
+    initialName: String = "",
+    initialDesc: String = "",
+    initialPrice: String = "",
+    initialDiscount: String = "",
+    isEdit: Boolean = false,
+    onDismiss: () -> Unit,
+    onSave: (String, String, String, String, Boolean) -> Unit
+) {
+    var name by remember { mutableStateOf(initialName) }
+    var desc by remember { mutableStateOf(initialDesc) }
+    var price by remember { mutableStateOf(initialPrice) }
+    var discount by remember { mutableStateOf(initialDiscount) }
+    var isEnabled by remember { mutableStateOf(true) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title, fontWeight = FontWeight.Bold) },
+        text = {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                item {
+                    // Picture Placeholder
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                            .background(Color(0xFFF5F5F5), RoundedCornerShape(12.dp))
+                            .clickable { /* Handle image pick */ },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Default.AddAPhoto, contentDescription = null, tint = Color.Gray)
+                            Text("Add Picture", color = Color.Gray, fontSize = 12.sp)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Food Name") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = desc,
+                        onValueChange = { desc = it },
+                        label = { Text("Description") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        minLines = 2
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+
+                    OutlinedTextField(
+                        value = price,
+                        onValueChange = { price = it },
+                        label = { Text("Price (Rs.)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    OutlinedTextField(
+                        value = discount,
+                        onValueChange = { discount = it },
+                        label = { Text("Discount (Optional)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+
+                    if (isEdit) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = if (isEnabled) "Status: Available" else "Status: Unavailable")
+                            Switch(
+                                checked = isEnabled,
+                                onCheckedChange = { isEnabled = it },
+                                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF356859))
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSave(name, desc, price, discount, isEnabled) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF356859))
+            ) {
+                Text(if (isEdit) "Update" else "Add")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color.Gray)
+            }
+        }
+    )
+}
+
+@Composable
+fun ShopSettingsDialog(
+    currentName: String,
+    currentUsername: String,
+    currentContact: String,
+    onDismiss: () -> Unit,
+    onLogout: () -> Unit,
+    onSave: (String, String, String) -> Unit
+) {
+    var name by remember { mutableStateOf(currentName) }
+    var username by remember { mutableStateOf(currentUsername) }
+    var contact by remember { mutableStateOf(currentContact) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Shop Settings", fontWeight = FontWeight.Bold)
+                IconButton(onClick = onLogout) {
+                    Icon(Icons.Default.Logout, contentDescription = "Logout", tint = Color.Red)
+                }
+            }
+        },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Logo Placeholder
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .background(Color(0xFFF5F5F5), RoundedCornerShape(40.dp))
+                        .clickable { /* Handle logo change */ },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Storefront, contentDescription = null, tint = Color(0xFF356859), modifier = Modifier.size(40.dp))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Shop Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Username") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = contact,
+                    onValueChange = { contact = it },
+                    label = { Text("Contact Number") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onLogout,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFEBEE), contentColor = Color.Red),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = null
+                ) {
+                    Icon(Icons.Default.Logout, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Logout from Shop", fontWeight = FontWeight.Bold)
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onSave(name, username, contact) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF356859))
+            ) {
+                Text("Save Changes")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color.Gray)
+            }
+        }
+    )
+}
+
+@Composable
+fun ManageFoodItemsContent() {
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var selectedFood by remember { mutableStateOf("") }
+
+    val foods = listOf(
+        "Chicken Burger",
+        "Pizza",
+        "Submarine",
+        "Fried Rice",
+        "Kottu"
+    )
+
+    if (showAddDialog) {
+        FoodActionDialog(
+            title = "Add New Food",
+            onDismiss = { showAddDialog = false },
+            onSave = { name, desc, price, discount, enabled ->
+                showAddDialog = false
+            }
+        )
+    }
+
+    if (showEditDialog) {
+        FoodActionDialog(
+            title = "Edit Food Item",
+            initialName = selectedFood,
+            initialDesc = "Delicious $selectedFood with special spices.",
+            initialPrice = "1500",
+            isEdit = true,
+            onDismiss = { showEditDialog = false },
+            onSave = { name, desc, price, discount, enabled ->
+                showEditDialog = false
+            }
+        )
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Food Items",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Button(
+                    onClick = { showAddDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF356859)),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Add Food", fontSize = 14.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        items(foods) { food ->
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+            ) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    // Food Image Placeholder
+                    Box(
+                        modifier = Modifier
+                            .size(60.dp)
+                            .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if(food.contains("Burger")) "🍔" else if(food.contains("Pizza")) "🍕" else "🍲",
+                            fontSize = 30.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            food,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text("Rs. 1500", color = Color(0xFF356859), fontWeight = FontWeight.SemiBold)
+                    }
+
+                    IconButton(onClick = {
+                        selectedFood = food
+                        showEditDialog = true
+                    }) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit Food",
                             tint = Color(0xFF356859)
                         )
                     }
