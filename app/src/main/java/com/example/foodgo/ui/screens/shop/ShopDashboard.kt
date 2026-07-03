@@ -243,3 +243,128 @@ fun ShopHomeContent(name: String, username: String, contact: String) {
         }
     }
 }
+
+
+@Composable
+fun DashboardCard(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .height(130.dp),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                value,
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color(0xFF356859),
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+data class Order(
+    val id: String,
+    val status: String
+)
+
+@Composable
+fun RecentOrderItem(order: Order) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+
+            horizontalArrangement =
+                Arrangement.SpaceBetween
+        ) {
+
+            Column {
+                Text(
+                    order.id,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    order.status
+                )
+            }
+
+            AssistChip(
+                onClick = {},
+                label = {
+                    Text(order.status)
+                }
+            )
+        }
+    }
+}
+
+data class StaffMember(val name: String, val role: StaffRole)
+
+
+@Composable
+fun RecentOrderItem(order: Order) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+
+            horizontalArrangement =
+                Arrangement.SpaceBetween
+        ) {
+
+            Column {
+                Text(
+                    order.id,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    order.status
+                )
+            }
+
+            AssistChip(
+                onClick = {},
+                label = {
+                    Text(order.status)
+                }
+            )
+        }
+    }
+}
+
+data class StaffMember(val name: String, val role: StaffRole)
