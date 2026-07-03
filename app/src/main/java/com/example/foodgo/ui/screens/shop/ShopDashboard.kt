@@ -492,3 +492,119 @@ fun StaffTypeButton(
         Text(label, fontSize = 12.sp)
     }
 }
+@Composable
+fun ManageStaffContent() {
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var selectedStaff by remember { mutableStateOf("") }
+
+    val staffList = listOf(
+        StaffMember("Kasun", StaffRole.Staff),
+        StaffMember("Nimal", StaffRole.DeliveryRider),
+        StaffMember("John", StaffRole.Staff),
+        StaffMember("Akila", StaffRole.DeliveryRider),
+        StaffMember("Sahan", StaffRole.Staff)
+    )
+
+    if (showAddDialog) {
+        StaffActionDialog(
+            title = "Add New Staff",
+            onDismiss = { showAddDialog = false },
+            onSave = { name, email, pass, role, enabled ->
+                showAddDialog = false
+            }
+        )
+    }
+
+    if (showEditDialog) {
+        StaffActionDialog(
+            title = "Edit Staff Details",
+            initialName = selectedStaff,
+            initialEmail = "${selectedStaff.lowercase()}@foodgo.com",
+            isEdit = true,
+            onDismiss = { showEditDialog = false },
+            onSave = { name, email, pass, role, enabled ->
+                showEditDialog = false
+            }
+        )
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Manage Staff",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Button(
+                    onClick = { showAddDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF356859)),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Add Staff", fontSize = 14.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        items(staffList) { staff ->
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+            ) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+
+                    horizontalArrangement =
+                        Arrangement.SpaceBetween,
+
+                    verticalAlignment =
+                        Alignment.CenterVertically
+                ) {
+
+                    Column {
+                        Text(
+                            staff.name,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            if (staff.role == StaffRole.Staff) "Staff Member" else "Delivery Rider",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        selectedStaff = staff.name
+                        showEditDialog = true
+                    }) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit Staff",
+                            tint = Color(0xFF356859)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
